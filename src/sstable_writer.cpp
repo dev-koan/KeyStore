@@ -1,6 +1,12 @@
-#include "sstable_write.hpp"
+#include "sstable_writer.hpp"
 
 SSTableWriter::SSTableWriter(const std::string& dir) : dir_(dir), next_id_(0) {}
+
+std::pair<size_t, size_t> optimalBloomParams(size_t n) {
+    n = std::max(n, size_t(1));
+    size_t bits = std::max(n * 10, size_t(64));  // ~10 bits/entry ≈ 1% false-positive rate
+    return {bits, 6}; // 6 hash functions is the matching sweet spot
+}
 
 SSTableWriter::Meta SSTableWriter::write(const std::vector<std::pair<int, MemTable::Entry>>& entries) {
 
@@ -22,18 +28,18 @@ SSTableWriter::Meta SSTableWriter::write(const std::vector<std::pair<int, MemTab
 
     next_id_++;
 
-    std::ofstream out(filename,std::ios::trunc | std::ios::binary);
-    std::ofstream index_out(indexname, std::ios::trunc);
+    std::ofstream out(filename, std::ios::trunc | std::ios::binary);
+    std::ofstream index_out(indexname, std::ios::trunc | std::ios::binary);
 
     if (!out.is_open() || !index_out.is_open())
         throw std::runtime_error("Failed to create SSTable files");
     
     size_t count = 0;
-    BloomFilter bf(1000000, 5);
+    auto [bit_count, hash_count] = optimalBloomParams(entries.size());
+    BloomFilter bf(bit_count, hash_count);
 
     for (const auto& [key, entry] : entries) {
         if (count % index_window_ == 0) {
-            // index_out << key << " " << static_cast<uint64_t>(out.tellp()) << "\n";
             SSTableIndexEntry index_entry{key, static_cast<uint64_t>(out.tellp())};
             index_out.write(reinterpret_cast<const char*>(&index_entry), sizeof(index_entry));
         }

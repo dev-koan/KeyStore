@@ -9,7 +9,7 @@
 #include "sstable_reader.hpp"
 #include "bloom_filter.hpp"
 #include "mem_table.hpp"
-#include "sstable_write.hpp"
+#include "sstable_writer.hpp"
 
 class SSTableManager {
 public:

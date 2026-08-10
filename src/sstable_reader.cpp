@@ -1,7 +1,7 @@
 #include "sstable_reader.hpp"
 
 SSTableReader::SSTableReader(const std::string& filename) : filename_(filename), data_(filename + ".sst",  std::ios::binary) {
-    std::ifstream index_file(filename + ".idx");
+    std::ifstream index_file(filename + ".idx", std::ios::binary);
     if (!index_file.is_open())
         return;
 
@@ -42,8 +42,6 @@ SSTableReader::getStatus SSTableReader::get(const int key) {
         
     data_.clear();
     data_.seekg(findStart(key), std::ios::beg);
-    std::optional<int> result;
-    std::string line;
 
     SSTableWriter::SSTableEntry sst_entry;
     while (data_.read(reinterpret_cast<char*>(&sst_entry), sizeof(sst_entry))) {

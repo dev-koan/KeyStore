@@ -7,7 +7,7 @@
 #include <sstream>
 #include <cstdint>
 #include "sstable_reader.hpp"
-#include "sstable_write.hpp"
+#include "sstable_writer.hpp"
 
 class SSTableReader {
 public:

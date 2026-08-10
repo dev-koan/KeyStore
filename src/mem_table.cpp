@@ -1,12 +1,14 @@
 #include "mem_table.hpp"
 
-MemTable::MemTable(size_t max_size) : current_size_(0), max_size_(max_size) {};
+MemTable::MemTable(size_t max_size) : current_size_(0), max_size_(max_size) {
+    table_.reserve(max_size_ / (sizeof(int) + sizeof(int) + sizeof(bool) + 32));
+};
 
 void MemTable::put(int key, const int value) {
+    if (!table_.count(key))
+        current_size_ += sizeof(int) + sizeof(int) + sizeof(bool) + 32;
     table_[key].value = value;
     table_[key].is_tombstone = false;
-
-    current_size_ += sizeof(int) + sizeof(int) + sizeof(bool) + 32;
 }
 
 void MemTable::erase(const int key) {
@@ -30,16 +32,19 @@ bool MemTable::isFull() const {
 }
 
 std::vector<std::pair<int, MemTable::Entry>> MemTable::toSortedEntries() const {
-    std::vector<std::pair<int, Entry>> entries;
-    
-    for (const auto& kv : table_)
-        entries.push_back(kv);
-    
+    std::vector<std::pair<int, Entry>> entries(table_.begin(), table_.end());
+    std::sort(entries.begin(), entries.end(), [](const std::pair<int, Entry>& a, const std::pair<int, Entry>& b) {
+        return a.first < b.first;
+    });
     return entries;
 }
 
 void MemTable::clear() {
     table_.clear();
     current_size_ = 0;
+}
+
+bool MemTable::isEmpty() const {
+    return table_.empty();
 }
 

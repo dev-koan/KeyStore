@@ -6,6 +6,7 @@
 #include <utility>
 #include <optional>
 #include <algorithm>
+#include <unordered_map>
 
 class MemTable {
 public:
@@ -21,9 +22,10 @@ public:
     bool isFull() const;
     std::vector<std::pair<int, Entry>> toSortedEntries() const;
     void clear();
+    bool isEmpty() const;
     
 private:
-    std::map<int, Entry> table_;
+    std::unordered_map<int, Entry> table_;
     size_t current_size_;
     size_t max_size_;
 };
