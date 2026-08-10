@@ -15,13 +15,18 @@ class SSTableManager {
 public:
     explicit SSTableManager(const std::string&);
 
+    struct SSTableHandle {
+        SSTableWriter::Meta meta;
+        std::unique_ptr<SSTableReader> reader;
+    };
+    
+
     void addSSTable(const std::vector<std::pair<int, MemTable::Entry>>& entries);
     std::optional<int> get(const int);
     void loadSSTables();
-    
+
 private:
     std::string directory_;
-    std::vector<SSTableWriter::Meta> sstable_files_;
     std::unique_ptr<SSTableWriter> sstable_writer_;
-    std::mutex mutex_;
+    std::vector<SSTableHandle> sstables_;
 };

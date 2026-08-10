@@ -185,19 +185,19 @@ int main() {
         std::this_thread::sleep_for(std::chrono::seconds(2));
         {
             KeyStore storeBench("wal.log", 40, false);
-            benchmarkWrites(storeBench, 1000000);
+            benchmarkWrites(storeBench, 100000);
         }
         clean();
         std::this_thread::sleep_for(std::chrono::seconds(2));
         {
             KeyStore storeBench("wal.log", 40, false);
-            benchmarkReads(storeBench, 1000000);
+            benchmarkReads(storeBench, 100000);
         }
         clean();
         std::this_thread::sleep_for(std::chrono::seconds(2));
         {
             KeyStore storeBench("wal.log", 40, false);
-            benchmarkMixedWorkload(storeBench, 1000000);
+            benchmarkMixedWorkload(storeBench, 100000);
         }
         
         std::cout << "All benchmarks completed!" << std::endl;

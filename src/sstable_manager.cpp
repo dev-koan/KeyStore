@@ -7,16 +7,16 @@ SSTableManager::SSTableManager(const std::string& directory)
 
 void SSTableManager::addSSTable(const std::vector<std::pair<int, MemTable::Entry>>& entries) {
     auto sst_meta = sstable_writer_->write(entries);
-    sstable_files_.push_back(std::move(sst_meta));
+    auto reader = std::make_unique<SSTableReader>(sst_meta.base);
+    sstables_.push_back(SSTableHandle{std::move(sst_meta), std::move(reader)});
 }
 
 std::optional<int> SSTableManager::get(const int key) {
-    for (size_t i = sstable_files_.size() - 1; i >= 0; i--) {
-        if (!sstable_files_[i].bloom_filter.mayContain(key))
+    for (size_t i = sstables_.size(); i-- > 0; ) {
+        if (!sstables_[i].meta.bloom_filter.mayContain(key))
             continue;   
 
-        SSTableReader reader(sstable_files_[i].base);
-        auto val = reader.get(key);
+        auto val = sstables_[i].reader->get(key);
         if (val.status == SSTableReader::getVal::FOUND) {
             return val.value;
         } else if (val.status == SSTableReader::getVal::DELETED) {
@@ -28,7 +28,7 @@ std::optional<int> SSTableManager::get(const int key) {
 }
 
 void SSTableManager::loadSSTables() {
-    sstable_files_.clear();
+    sstables_.clear();
 
     if (!std::filesystem::exists(directory_))
         return;
@@ -48,7 +48,11 @@ void SSTableManager::loadSSTables() {
     for (const auto& entry : entries) {
         if (entry.path().extension() == ".sst") {
             std::string path = entry.path().string();
-            sstable_files_.push_back(SSTableWriter::Meta{path.substr(0, path.size() - 4), BloomFilter::deserialize(path.substr(0, path.size() - 4))});
+            std::string base = path.substr(0, path.size() - 4);
+
+            SSTableWriter::Meta meta{base, BloomFilter::deserialize(base)};
+            auto reader = std::make_unique<SSTableReader>(base);
+            sstables_.push_back(SSTableHandle{std::move(meta), std::move(reader)});
         }
     }
 }
