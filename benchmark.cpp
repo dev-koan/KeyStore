@@ -7,6 +7,8 @@
 #include <iomanip>
 #include "key_store.hpp"
 
+const int OPS_TO_FILE = 5000;
+
 class BenchmarkStats {
 public:
     std::vector<double> latencies;
@@ -176,28 +178,32 @@ void benchmarkMixedWorkload(KeyStore& store, int num_operations) {
 
 
 int main() {
+    int num_operations;
     std::cout << "KeyValue Store Test Suite" << std::endl;
-    
+    std::cout << "Enter the number of operations for each benchmark (e.g., 1000000): ";
+    std::cin >> num_operations;
+
+    const int filesize = num_operations / OPS_TO_FILE; 
     try {
         
         // Run benchmarks
         clean();
         std::this_thread::sleep_for(std::chrono::seconds(2));
         {
-            KeyStore storeBench("wal.log", 40, false);
-            benchmarkWrites(storeBench, 100000);
+            KeyStore storeBench("wal.log", filesize, false);
+            benchmarkWrites(storeBench, num_operations);
         }
         clean();
         std::this_thread::sleep_for(std::chrono::seconds(2));
         {
-            KeyStore storeBench("wal.log", 40, false);
-            benchmarkReads(storeBench, 100000);
+            KeyStore storeBench("wal.log", filesize, false);
+            benchmarkReads(storeBench, num_operations);
         }
         clean();
         std::this_thread::sleep_for(std::chrono::seconds(2));
         {
-            KeyStore storeBench("wal.log", 40, false);
-            benchmarkMixedWorkload(storeBench, 100000);
+            KeyStore storeBench("wal.log", filesize, false);
+            benchmarkMixedWorkload(storeBench, num_operations);
         }
         
         std::cout << "All benchmarks completed!" << std::endl;
