@@ -21,15 +21,11 @@
 <img width="847" height="1224" alt="image" src="https://github.com/user-attachments/assets/1c6a6734-14f5-4e07-8116-942ad7808801" />
 
 
-### Build with CMake (Windows)
-
-Prerequisites:
-- CMake 3.20+
-- MinGW
+### Build with CMake (Linux)
 
 Configure:
 ```powershell
-cmake -S . -B build -G "MinGW Makefiles"
+cmake -S . -B build
 ```
 
 Build:
@@ -39,14 +35,14 @@ cmake --build build
 
 Run functional tests:
 ```powershell
-.\build\runFunc.exe crash1
-.\build\runFunc.exe verify1
-.\build\runFunc.exe crash2
-.\build\runFunc.exe verify2
-.\build\runFunc.exe delete
+./build/runFunc.exe crash1
+./build/runFunc.exe verify1
+./build/runFunc.exe crash2
+./build/runFunc.exe verify2
+./build/runFunc.exe delete
 ```
 
 Run benchmark:
 ```powershell
-.\build\runB.exe
+./build/runB.exe
 ```

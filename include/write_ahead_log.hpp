@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <vector>
-#include <io.h>
+#include <unistd.h>
 #include "mem_table.hpp"
 
 class WriteAheadLog {
