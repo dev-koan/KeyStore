@@ -19,12 +19,24 @@
 class KeyStore {
     private:
         const int KILOBYTE = 1024;
-        std::unique_ptr<MemTable> active_;
+
+        std::shared_ptr<MemTable> active_;
+        std::vector<std::shared_ptr<MemTable>> immutable_;
+        std::mutex mem_mutex_; 
+
         std::unique_ptr<WriteAheadLog> wal_;
         std::unique_ptr<SSTableManager> sstable_manager_;
         const bool isWal_; 
         const int max_mem_;
-        bool shutting_down_ = false;
+
+        std::queue<std::shared_ptr<MemTable>> flush_queue_;
+        std::mutex queue_mutex_;
+        std::condition_variable queue_cv_;
+        std::thread flush_thread_;
+        std::atomic<bool> shutting_down_{false};
+
+        void flushLoop();
+        void scheduleFlush(std::shared_ptr<MemTable> table);
 
     public:
         explicit KeyStore(const std::string&, const int, const bool);
@@ -43,4 +55,3 @@ class KeyStore {
         void deleteKey(const int);
         bool hasKey(const int);
 };
-

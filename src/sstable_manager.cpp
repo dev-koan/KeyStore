@@ -1,17 +1,18 @@
 #include "sstable_manager.hpp"
 
-
 SSTableManager::SSTableManager(const std::string& directory)
     : directory_(directory), sstable_writer_(std::make_unique<SSTableWriter>(directory)) {
 }
 
 void SSTableManager::addSSTable(const std::vector<std::pair<int, MemTable::Entry>>& entries) {
     auto sst_meta = sstable_writer_->write(entries);
+    std::unique_lock lock(mutex_);
     auto reader = std::make_unique<SSTableReader>(sst_meta.base);
     sstables_.push_back(SSTableHandle{std::move(sst_meta), std::move(reader)});
 }
 
 std::optional<int> SSTableManager::get(const int key) {
+    std::shared_lock lock(mutex_);
     for (size_t i = sstables_.size(); i-- > 0; ) {
         if (!sstables_[i].meta.bloom_filter.mayContain(key))
             continue;   
@@ -56,4 +57,3 @@ void SSTableManager::loadSSTables() {
         }
     }
 }
-

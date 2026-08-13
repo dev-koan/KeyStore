@@ -29,4 +29,5 @@ private:
     std::string directory_;
     std::unique_ptr<SSTableWriter> sstable_writer_;
     std::vector<SSTableHandle> sstables_;
+    mutable std::shared_mutex mutex_;
 };

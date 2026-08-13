@@ -37,7 +37,6 @@ public:
 private:
     std::string filename_;
     std::vector<Entry> index_;
-    // std::ifstream data_;
     void *data_ = NULL;
     size_t data_size_ = 0;
 };

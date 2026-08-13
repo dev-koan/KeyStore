@@ -5,6 +5,7 @@ MemTable::MemTable(size_t max_size) : current_size_(0), max_size_(max_size) {
 };
 
 void MemTable::put(int key, const int value) {
+    std::unique_lock lock(mutex_);
     if (!table_.count(key))
         current_size_ += sizeof(int) + sizeof(int) + sizeof(bool) + 32;
     table_[key].value = value;
@@ -12,6 +13,7 @@ void MemTable::put(int key, const int value) {
 }
 
 void MemTable::erase(const int key) {
+    std::unique_lock lock(mutex_);
     if (table_.count(key)){
         table_[key].is_tombstone = true;
     } else {
@@ -22,12 +24,13 @@ void MemTable::erase(const int key) {
 }
 
 std::optional<MemTable::Entry> MemTable::get(const int key) const {
+    std::shared_lock lock(mutex_);
     auto it = table_.find(key);
-
     return it != table_.end() ? std::optional<MemTable::Entry>(it->second) : std::nullopt;
 }
 
 bool MemTable::isFull() const {
+    std::shared_lock lock(mutex_);
     return current_size_ >= max_size_;
 }
 
@@ -47,4 +50,3 @@ void MemTable::clear() {
 bool MemTable::isEmpty() const {
     return table_.empty();
 }
-

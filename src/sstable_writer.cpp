@@ -4,8 +4,8 @@ SSTableWriter::SSTableWriter(const std::string& dir) : dir_(dir), next_id_(0) {}
 
 std::pair<size_t, size_t> optimalBloomParams(size_t n) {
     n = std::max(n, size_t(1));
-    size_t bits = std::max(n * 10, size_t(64));  // ~10 bits/entry ≈ 1% false-positive rate
-    return {bits, 6}; // 6 hash functions is the matching sweet spot
+    size_t bits = std::max(n * 10, size_t(64));
+    return {bits, 6};
 }
 
 SSTableWriter::Meta SSTableWriter::write(const std::vector<std::pair<int, MemTable::Entry>>& entries) {
