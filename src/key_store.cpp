@@ -123,6 +123,8 @@ void KeyStore::flushLoop() {
 
         {
             std::lock_guard<std::mutex> lock(mem_mutex_);
+            if (wal_)
+                wal_->reset();
             immutable_.erase(
                 std::remove(immutable_.begin(), immutable_.end(), table),
                 immutable_.end());
