@@ -67,7 +67,7 @@ void KeyStore::putKey(const int key, const int val) {
         std::shared_ptr<MemTable> full_table;
         {
             std::lock_guard<std::mutex> lock(mem_mutex_);
-            if (active_ == current) {   // avoid double-swap if 2 writers raced here
+            if (active_ == current) {
                 full_table = active_;
                 immutable_.push_back(full_table);
                 active_ = std::make_shared<MemTable>(max_mem_);
@@ -123,8 +123,6 @@ void KeyStore::flushLoop() {
 
         {
             std::lock_guard<std::mutex> lock(mem_mutex_);
-            if (wal_)
-                wal_->reset();
             immutable_.erase(
                 std::remove(immutable_.begin(), immutable_.end(), table),
                 immutable_.end());

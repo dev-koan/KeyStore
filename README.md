@@ -17,7 +17,11 @@
 ### Phase 4
 - Use memory mapped files
 
-### Phase 5 (Not Implemented yet) - Support 1 billion+ read/write ops sub 50 seconds
+### Phase 5
+- Write Ahead Logging may require some fixes when multi-threading
+- Better benchmarking and testing infrastructure
+
+### Phase 6 (Not Implemented yet) - Support 1 billion+ read/write ops sub 50 seconds
 - Add compaction
 - Multi threads for writing 
 - Support concurrent reads and write while ensuring eventual consistency 
@@ -48,53 +52,53 @@ Run benchmark:
 ./build/runB.exe
 ```
 
-### Benchmarking Results (1 Million Operation)
+### Benchmarking Results (10 Million Operation)
 
 ```
 Write Results
 Operations: 1000000
-Duration: 0.5128556830 seconds
-Throughput: 1949866.2745636380 ops/second
-Average Latency: 0.0000004395 seconds
-P50 Latency: 0.0000002020 seconds
-P99 Latency: 0.0000003220 seconds
-P999 Latency: 0.0000005640 seconds
-Min Latency: 0.0000001800 seconds
-Max Latency: 0.0025220140 seconds
+Duration: 0.3478130800 seconds
+Throughput: 2875107.5146455104 ops/second
+Average Latency: 0.0000002881 seconds
+P50 Latency: 0.0000002380 seconds
+P99 Latency: 0.0000007730 seconds
+P999 Latency: 0.0000069080 seconds
+Min Latency: 0.0000002070 seconds
+Max Latency: 0.0013862800 seconds
 
 Read Results
 Operations: 1000000
-Duration: 4.0372825350 seconds
-Throughput: 247691.3595545524 ops/second
-Average Latency: 0.0000039571 seconds
-P50 Latency: 0.0000037970 seconds
-P99 Latency: 0.0000083400 seconds
-P999 Latency: 0.0000267820 seconds
-Min Latency: 0.0000001820 seconds
-Max Latency: 0.0024382040 seconds
+Duration: 3.6723452300 seconds
+Throughput: 272305.5533643279 ops/second
+Average Latency: 0.0000036013 seconds
+P50 Latency: 0.0000033290 seconds
+P99 Latency: 0.0000100120 seconds
+P999 Latency: 0.0000419400 seconds
+Min Latency: 0.0000002500 seconds
+Max Latency: 0.0007654720 seconds
 
 Mixed Workload (70% read, 30% write)
 
 Mixed Read Results
-Operations: 699358
-Duration: 2.3572484520 seconds
-Throughput: 296684.0425355384 ops/second
-Average Latency: 0.0000028914 seconds
-P50 Latency: 0.0000027880 seconds
-P99 Latency: 0.0000059800 seconds
-P999 Latency: 0.0000190290 seconds
-Min Latency: 0.0000001390 seconds
-Max Latency: 0.0023466490 seconds
+Operations: 700069
+Duration: 1.9742083520 seconds
+Throughput: 354607.4553330630 ops/second
+Average Latency: 0.0000025040 seconds
+P50 Latency: 0.0000023630 seconds
+P99 Latency: 0.0000050010 seconds
+P999 Latency: 0.0000264260 seconds
+Min Latency: 0.0000002110 seconds
+Max Latency: 0.0026154640 seconds
 
 Mixed Write Results
-Operations: 300642
-Duration: 2.3572484520 seconds
-Throughput: 127539.3774232501 ops/second
-Average Latency: 0.0000006795 seconds
-P50 Latency: 0.0000002730 seconds
-P99 Latency: 0.0000006160 seconds
-P999 Latency: 0.0000046690 seconds
-Min Latency: 0.0000001760 seconds
-Max Latency: 0.0074823970 seconds
-All benchmarks completed!
+Operations: 299931
+Duration: 1.9742083520 seconds
+Throughput: 151924.6941165813 ops/second
+Average Latency: 0.0000003753 seconds
+P50 Latency: 0.0000003130 seconds
+P99 Latency: 0.0000007750 seconds
+P999 Latency: 0.0000039670 seconds
+Min Latency: 0.0000002050 seconds
+Max Latency: 0.0003951630 seconds
+All benchmarks completed
 ```

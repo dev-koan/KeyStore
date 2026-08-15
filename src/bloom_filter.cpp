@@ -44,12 +44,12 @@ void BloomFilter::serialize(const std::string& path) const {
 
 BloomFilter BloomFilter::deserialize(const std::string& path) {
     std::ifstream in(path + ".bf", std::ios::binary);
+    if (!in.is_open())
+        throw std::runtime_error("Failed to read Bloom filter from file: " + path);
+
     size_t bits, hashes;
     in.read(reinterpret_cast<char*>(&bits), sizeof(bits));
     in.read(reinterpret_cast<char*>(&hashes), sizeof(hashes));
-
-    if (!in.is_open())
-        throw std::runtime_error("Failed to read Bloom filter from file: " + path);
 
     BloomFilter bf(bits, hashes);
     in.read(reinterpret_cast<char*>(bf.bits_.data()), bf.bits_.size());
