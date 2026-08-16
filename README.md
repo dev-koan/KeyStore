@@ -52,7 +52,7 @@ Run benchmark:
 ./build/runB.exe
 ```
 
-### Benchmarking Results (10 Million Operation)
+### Benchmarking Results (1 Million Operation)
 
 ```
 Write Results
